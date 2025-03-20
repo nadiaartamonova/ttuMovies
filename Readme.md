@@ -7,12 +7,12 @@ Nadezda Artamonova
 # Step 1.
 
 .env
-DB_NAME = DB_Artamonova
-DB_USERNAME = 
-DB_PASSWORD = 
-DB_HOST = 
-DB_PORT = 5432
-DB_DIALECT = postgres
+    DB_NAME = DB_Artamonova
+    DB_USERNAME = 
+    DB_PASSWORD = 
+    DB_HOST = 
+    DB_PORT = 5432
+    DB_DIALECT = postgres
 
 JWT_SECRET=supersecretkey123
 
