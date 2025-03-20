@@ -32,18 +32,18 @@ Thunder Client
 
 http://localhost:3000/auth/register
 ```
-    {
+{
     "username": "test",
     "password": "123"
-    }
+}
 ```
 # Login
 http://localhost:3000/auth/login
 ```
-    {
+{
     "username": "test",
     "password": "123"
-    }
+}
 ```
 # Category
 ## CRUD
@@ -57,18 +57,18 @@ http://localhost:3000/categories/2
 
 http://localhost:3000/categories
 ```
-    {
+{
     "name": "Test cat1"
-    }
+}
 ```
 
 ### UPDATE
 http://localhost:3000/categories/20
 
 ```
-    {
+{
     "name": "Test cat2"
-    }
+}
 ```
 ### DELETE
 http://localhost:3000/categories/20
@@ -84,21 +84,21 @@ http://localhost:3000/actors/2
 
 ### CREATE
 
-http://localhost:3000/categories
+http://localhost:3000/actors
 ```
-    {
+{
     "first_name": "Nadia",
     "last_name": "Art"
-    }
+}
 ```
 ### UPDATE
 http://localhost:3000/actors/205
 
 ```
-    {
+{
     "first_name": "Nadia123",
     "last_name": "Art23"
-    }
+}
 ```
 ### DELETE
 http://localhost:3000/actors/205
@@ -115,17 +115,17 @@ http://localhost:3000/languages
 
 http://localhost:3000/languages
 ```
-    {
+{
     "name": "Estonian"
-    }
+}
 ```
 ### UPDATE
 http://localhost:3000/languages/8
 
 ```
-    {
+{
     "name": "Russian"
-    }
+}
 ```
 ### DELETE
 http://localhost:3000/languages/8
@@ -141,7 +141,6 @@ works with pagination.
 standart:
 from id = 1, size = 100
 ```
-http://localhost:3000/films
 
 http://localhost:3000/films?page=2&size=200
 ```
@@ -161,7 +160,7 @@ http://localhost:3000/films?page=2&size=10
 http://localhost:3000/films/1
 
 ### CREATE
-post
+
 http://localhost:3000/films
 ```
 {
