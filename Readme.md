@@ -54,7 +54,7 @@ http://localhost:3000/categories
 http://localhost:3000/categories/2
 
 ### CREATE
-post
+
 http://localhost:3000/categories
 ```
     {
@@ -64,7 +64,7 @@ http://localhost:3000/categories
 
 ### UPDATE
 http://localhost:3000/categories/20
-Put
+
 ```
     {
     "name": "Test cat2"
@@ -83,7 +83,7 @@ http://localhost:3000/actors
 http://localhost:3000/actors/2
 
 ### CREATE
-post
+
 http://localhost:3000/categories
 ```
     {
@@ -93,7 +93,7 @@ http://localhost:3000/categories
 ```
 ### UPDATE
 http://localhost:3000/actors/205
-Put
+
 ```
     {
     "first_name": "Nadia123",
@@ -112,7 +112,7 @@ http://localhost:3000/languages
 http://localhost:3000/languages
 
 ### CREATE
-post
+
 http://localhost:3000/languages
 ```
     {
@@ -121,7 +121,7 @@ http://localhost:3000/languages
 ```
 ### UPDATE
 http://localhost:3000/languages/8
-Put
+
 ```
     {
     "name": "Russian"
@@ -174,7 +174,7 @@ http://localhost:3000/films
 ```
 ### UPDATE
 http://localhost:3000/films/1003
-Put
+
 ```
 {
 
@@ -193,13 +193,16 @@ http://localhost:3000/films/search/title?title=Academy
 
 ### with filter 
 http://localhost:3000/films/search/title?title=Academy&sortBy=rental_rate&order=DESC
+
 http://localhost:3000/films/search/language?language=English&sortBy=film_id&order=ASC
 
 
 ### Search actors with the name // last name // name+lastname
 
 http://localhost:3000/films/search/actor?actor=Nick
+
 http://localhost:3000/films/search/actor?actor=MARY KEITEL
+
 http://localhost:3000/films/search/actor?actor=MARY&sortBy=length&order=ASC
 
 ### By language
