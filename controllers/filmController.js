@@ -157,29 +157,36 @@ exports.updateFilm = async (req, res) => {
 
 
 // Удаление фильма
+
 exports.deleteFilm = async (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid film ID" });
 
+    const transaction = await sequelize.transaction();
+
     try {
+        const film = await models.film.findByPk(id, { transaction });
+        if (!film) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Film not found" });
+        }
 
-        const film = await models.film.findByPk(id);
-        if (!film) return res.status(404).json({ message: "Film not found" });
+        // Удаляем связи
+        await models.film_actor.destroy({ where: { film_id: id }, transaction });
+        await models.film_category.destroy({ where: { film_id: id }, transaction });
 
-        await models.film_actor.destroy({ where: { film_id: id } });
+        // Удаляем сам фильм
+        await film.destroy({ transaction });
 
-
-        await models.film_category.destroy({ where: { film_id: id } });
-
-
-        await film.destroy();
-
+        await transaction.commit();
         res.status(204).end();
     } catch (error) {
+        await transaction.rollback();
         console.error(error);
         res.status(500).json({ message: "An error occurred while deleting the film" });
     }
 };
+
 
 
 //http://localhost:3000/films/search/title?title=Academy&sortBy=rental_rate&order=DESC
