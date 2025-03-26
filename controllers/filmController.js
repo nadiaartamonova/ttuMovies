@@ -2,6 +2,9 @@ const db = require("../config/database");
 const initModels = require("../models/init-models");
 const models = initModels(db);
 
+const sequelize = require('../config/database');
+
+
 // Получение всех фильмов
 exports.getAllFilms = async (req, res) => {
     try {
@@ -52,9 +55,8 @@ exports.getFilmById = async (req, res) => {
 exports.createFilm = async (req, res) => {
     const { title, release_year, language_id, actor_ids, category_ids } = req.body;
 
-
-    if (!title || !language_id|| !release_year) {
-        return res.status(400).json({ message: "Title and language, year and rental rate are required" });
+    if (!title || !language_id || !release_year) {
+        return res.status(400).json({ message: "Title, language, and year are required" });
     }
     if (!actor_ids || !Array.isArray(actor_ids) || actor_ids.length === 0) {
         return res.status(400).json({ message: "At least one actor_id is required" });
@@ -63,27 +65,29 @@ exports.createFilm = async (req, res) => {
         return res.status(400).json({ message: "At least one category_id is required" });
     }
 
-    try {
+    const transaction = await sequelize.transaction();
 
+
+    try {
         const newFilm = await models.film.create({
             title,
             release_year,
             language_id
-        });
-
+        }, { transaction });
 
         const filmActors = actor_ids.map(actor_id => ({
             film_id: newFilm.film_id,
             actor_id
         }));
-        await models.film_actor.bulkCreate(filmActors);
-
+        await models.film_actor.bulkCreate(filmActors, { transaction });
 
         const filmCategories = category_ids.map(category_id => ({
             film_id: newFilm.film_id,
             category_id
         }));
-        await models.film_category.bulkCreate(filmCategories);
+        await models.film_category.bulkCreate(filmCategories, { transaction });
+
+        await transaction.commit(); 
 
         res.status(201).json({
             message: "Film created successfully",
@@ -92,10 +96,12 @@ exports.createFilm = async (req, res) => {
             categories: category_ids
         });
     } catch (error) {
+        await transaction.rollback(); 
         console.error(error);
         res.status(500).json({ message: "An error occurred while creating the film" });
     }
 };
+
 
 // Обновление фильма
 exports.updateFilm = async (req, res) => {
@@ -104,25 +110,36 @@ exports.updateFilm = async (req, res) => {
 
     if (isNaN(id)) return res.status(400).json({ message: "Invalid film ID" });
 
-    try {
-        const film = await models.film.findByPk(id);
-        if (!film) return res.status(404).json({ message: "Film not found" });
+    const transaction = await sequelize.transaction();
+ 
 
-        await film.update({ title, release_year, language_id });
+    try {
+        const film = await models.film.findByPk(id, { transaction });
+        if (!film) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Film not found" });
+        }
+
+        await film.update(
+            { title, release_year, language_id },
+            { transaction }
+        );
 
 
         if (actor_ids && Array.isArray(actor_ids)) {
-            await models.film_actor.destroy({ where: { film_id: id } }); 
+            await models.film_actor.destroy({ where: { film_id: id }, transaction });
             const filmActors = actor_ids.map(actor_id => ({ film_id: id, actor_id }));
-            await models.film_actor.bulkCreate(filmActors); 
+            await models.film_actor.bulkCreate(filmActors, { transaction });
         }
 
 
         if (category_ids && Array.isArray(category_ids)) {
-            await models.film_category.destroy({ where: { film_id: id } }); 
+            await models.film_category.destroy({ where: { film_id: id }, transaction });
             const filmCategories = category_ids.map(category_id => ({ film_id: id, category_id }));
-            await models.film_category.bulkCreate(filmCategories); 
+            await models.film_category.bulkCreate(filmCategories, { transaction });
         }
+
+        await transaction.commit(); 
 
         res.status(200).json({
             message: "Film updated successfully",
@@ -131,10 +148,12 @@ exports.updateFilm = async (req, res) => {
             categories: category_ids || "Not updated"
         });
     } catch (error) {
+        await transaction.rollback(); 
         console.error(error);
         res.status(500).json({ message: "An error occurred while updating the film" });
     }
 };
+
 
 
 // Удаление фильма
